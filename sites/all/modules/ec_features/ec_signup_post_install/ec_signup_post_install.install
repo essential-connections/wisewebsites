@@ -1,0 +1,20 @@
+<?php
+
+
+function ec_signup_post_install_install() {
+  
+  $result = db_query("REPLACE INTO {signup_status_codes} (cid, name, description, mod_signup_count, show_on_form, weight) VALUES
+(1, 'Pending', '', 0, 0, 0),
+(2, 'Approved', '', 1, 0, 0),
+(3, 'Denied', '', 0, 0, 0);");
+  if($result != 1) watchdog('ec_signup_post_install', 'problem replacing signup_status_codes in hook_install', array(), WATCHDOG_ERROR, NULL);
+
+}
+
+function ec_signup_post_install_uninstall() {
+  
+  
+}
+
+
+

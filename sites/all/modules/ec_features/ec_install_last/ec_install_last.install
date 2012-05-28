@@ -1,0 +1,17 @@
+<?php
+
+
+function ec_install_last_install() {
+	
+	drupal_flush_all_caches();
+
+    //watchdog('ec_formats_filters_post_install', 'problem replacing better_formats_defaults in hook_install', array(), WATCHDOG_ERROR,NULL);
+  
+
+}
+
+function ec_install_last_uninstall() {
+  
+  
+}
+

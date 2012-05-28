@@ -1,0 +1,8 @@
+core = "6.x"
+description = "a hook_install after signup is installed"
+name = "ec_signup_post_install"
+package = "Features"
+project = "ec_signup_post_install"
+version = "6.x-1.0"
+
+

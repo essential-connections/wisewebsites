@@ -1,0 +1,172 @@
+<?php
+
+include_once('ec_user.features.inc');
+
+/**
+ * Preprocess function for the page theme hook.
+ *
+ */
+function ec_user_preprocess_page(&$variables) {
+    if(arg(0) == 'admin' && arg(1) == 'user' && arg(2) == 'roles' && !arg(3)){
+	/*$locked_roles = variable_get('ec_locked_roles',array(DRUPAL_ANONYMOUS_RID, DRUPAL_AUTHENTICATED_RID,3,4,5,6));
+        $header = array(t('Name'), array('data' => t('Operations'), 'colspan' => 2));
+        foreach (user_roles() as $rid => $name) {
+            $edit_permissions = l(t('edit permissions'), 'admin/user/permissions/'. $rid);
+            if (!in_array($rid, $locked_roles)) {
+                $rows[] = array($name, l(t('edit role'), 'admin/user/roles/edit/'. $rid), $edit_permissions);
+            }else{
+                $rows[] = array($name, t('locked'), $edit_permissions);
+            }
+        }
+        //module_load_include('inc', 'user', 'user.admin');
+        $form = user_admin_role();
+        $rows[] = array(drupal_render($form['name']), array('data' => drupal_render($form['submit']), 'colspan' => 2));
+
+        $output = drupal_render($form);
+        //$output = drupal_render_form('user_admin_new_role',$form);
+        $output .= theme('table', $header, $rows);
+        */
+         
+        //$output = $variables['content'];     
+        $output = str_replace('<a href="/admin/user/roles/edit/5">edit role</a>','locked',$variables['content']);
+        $variables['content'] = $output;
+        $output = str_replace('<a href="/admin/user/roles/edit/3">edit role</a>','locked',$variables['content']);
+        $variables['content'] = $output; 
+        $output = str_replace('<a href="/admin/user/roles/edit/4">edit role</a>','locked',$variables['content']);
+        $variables['content'] = $output; 
+        $output = str_replace('<a href="/admin/user/roles/edit/6">edit role</a>','locked',$variables['content']);
+        $variables['content'] = $output; 
+       
+    }
+}
+
+/**
+ * Implementation of hook_menu().
+ */
+function ec_user_menu() {
+  $items = array();
+
+  global $user;
+  
+  /*$items['admin/user/add'] = array(
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ucreate_user_form'),
+    'title' => 'Add user',
+    'description' => 'Add a user to this web site.',
+    'access arguments' => array('create users'),
+    'menu_name' => 'menu-administration',
+  );*/
+ 
+  $items['admin/user/create'] = array(
+    'title' => 'Add user',
+	'page callback' => 'user_admin',
+    'page arguments' => array('create'),
+    'access arguments' => array('administer users'),
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'user.admin.inc',
+	'file path' => drupal_get_path('module', 'user'),
+	'menu_name' => 'menu-administration',
+  );
+
+  
+  /*
+  $items['admin/user/user_settings'] = array(
+     'title' => 'User Settings',
+     'description' => '',
+     'page callback' => 'drupal_get_form',
+     'page arguments' => array('ec_user_user_settings'),
+     'access callback' => 'user_access',
+     'access arguments' => array('administer users'),
+     'type' => MENU_NORMAL_ITEM,
+     'weight' => 3
+  );
+  */
+  
+  return $items;
+}
+
+/**
+* Implementation of hook_menu_link_alter()
+*/
+function ec_user_menu_link_alter(&$item, $menu) {
+  global $user;
+  if($item['link_path'] == 'user/add'){
+      $item['hidden'] = 1;
+  }
+}
+
+/**
+ * Implementation of hook_form_alter().
+ */
+function ec_user_form_alter(&$form, $form_state, $form_id) {
+
+  //$node = $form['#node'];
+  
+  // lock default roles
+  if($form_id == 'user_admin_role'){
+    $locked_roles = variable_get('ec_locked_roles',array(DRUPAL_ANONYMOUS_RID, DRUPAL_AUTHENTICATED_RID,3,4,5,6));
+    $rid = arg(4);
+    if (in_array($rid,$locked_roles)) {
+        drupal_set_message('This role is locked','error');
+        drupal_goto('admin/user/roles');
+    }
+  }else 
+  if($form_id == 'user_profile_form'){
+     //drupal_set_message('<b>form:</b><pre>'.print_r($form, TRUE) .'</pre>');
+      unset($form['theme_select']);
+  }
+
+}
+
+/*
+function ec_user_user_settings_submit($form, &$form_state) {
+
+        // set variables
+        variable_set('user_register', $form_state['values']['user_register']);
+        variable_set('user_email_verification', $form_state['values']['user_email_verification']);
+        variable_set('user_registration_help', $form_state['values']['user_registration_help']);
+        drupal_set_message(t('The configuration options have been saved.'));
+        //drupal_goto($_GET['q'], drupal_get_destination());
+}
+function ec_user_user_settings() {
+  //global $user;
+
+  $form['registration'] = array('#type' => 'fieldset', '#title' => t('User registration settings'));
+  $form['registration']['user_register'] = array(
+	'#type' => 'radios', 
+	'#title' => t('Public registrations'), 
+	'#default_value' => variable_get('user_register', 1), 
+	'#options' => array(
+		t('Only site administrators can create new user accounts.'), 
+		t('Visitors can create accounts and no administrator approval is required.'), 
+		t('Visitors can create accounts but administrator approval is required.')
+	)
+  );
+  $form['registration']['user_email_verification'] = array(
+	'#type' => 'checkbox', 
+	'#title' => t('Require e-mail verification when a visitor creates an account'), 
+	'#default_value' => variable_get('user_email_verification', TRUE), 
+	'#description' => t('If this box is checked, new users will be required to validate their e-mail address prior to logging into the site, and will be assigned a system-generated password. With it unchecked, users will be logged in immediately upon registering, and may select their own passwords during registration.')
+  );
+  $form['registration']['user_registration_help'] = array(
+	'#type' => 'textarea', '#title' => t('User registration guidelines'), 
+	'#default_value' => variable_get('user_registration_help', ''), 
+	'#description' => t('This text is displayed at the top of the user registration form and is useful for helping or instructing your users.')
+  );
+
+
+  $form['submit'] = array('#type' => 'submit', '#value' => t('Save'));
+
+  return $form;
+
+}
+*/
+
+
+
+
+
+
+
+
+

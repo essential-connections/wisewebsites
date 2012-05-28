@@ -1,0 +1,43 @@
+<?php
+
+include_once('ec_profile_csv.features.inc');
+
+/**
+ * Implementation of hook_menu().
+ */
+function ec_profile_csv_menu() {
+  $items = array();
+ 
+  $items['admin/user/profile_csv_settings'] = array(
+    'title'            => 'User Export Settings',
+    'type'             => MENU_NORMAL_ITEM,
+    'description'      => 'Select user data for export',
+    'page callback'    => 'drupal_get_form',
+    'page arguments'   => array('profile_csv_admin_settings'),
+    'access arguments' => array('administer users'),
+  );
+  $items['admin/user/profile_csv_export'] = array(
+    'title'            => 'User Export',
+    'type'             => MENU_NORMAL_ITEM,
+    'page callback'    => 'profile_csv_page',
+    'access arguments' => array(PROFILE_CSV_PERM_DOWNLOAD),
+  );
+
+
+  return $items;
+}
+function ec_profile_csv_menu_alter(&$items) {
+  //dpm($items['admin/settings/profile_csv']);
+  
+  
+}
+/**
+* Implementation of hook_menu_link_alter()
+*/
+function ec_profile_csv_menu_link_alter(&$item, $menu) {
+
+    if ($item['link_path'] == 'admin/settings/profile_csv') {
+	  $item['hidden'] = 1;
+    }
+  
+}

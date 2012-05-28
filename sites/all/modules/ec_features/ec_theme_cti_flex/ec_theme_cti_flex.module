@@ -1,0 +1,47 @@
+<?php
+
+include_once('ec_theme_cti_flex.features.inc');
+
+function ec_theme_cti_flex_form_alter(&$form, $form_state, $form_id) {
+
+  //global $user;
+  //global $base_path;
+
+  switch($form_id){
+    case 'system_themes_form':
+        
+
+        //$form['cti_flex']['info']['#value']['description'] = '';
+
+        //$form['cti_flex']['info']['#value']['version'] = '';
+
+        unset($form['zen']);
+        unset($form['STARTERKIT']);
+        unset($form['zen_classic']);
+
+        unset($form['status']['#options']['zen']);
+        unset($form['status']['#options']['STARTERKIT']);
+        unset($form['status']['#options']['zen_classic']);
+
+        unset($form['theme_default']['#options']['zen']);
+        unset($form['theme_default']['#options']['STARTERKIT']);
+        unset($form['theme_default']['#options']['zen_classic']);
+
+      
+      break;
+    case 'system_theme_settings':
+
+		// zen/cti_flex
+		$form['theme_specific']['zen_block_editing']['#type'] = 'hidden';
+//		$form['theme_specific']['breadcrumb']['#type'] = 'hidden';
+		$form['theme_specific']['themedev']['zen_rebuild_registry']['#type'] = 'hidden';
+        if(arg(4)=='cti_flex'){ $form['theme_specific']['themedev']['zen_rebuild_registry']['#prefix'] = '<div id="div-zen-registry">';}
+//			$form['theme_specific']['cti_flex_design']['#description'] = 'Select the specific site design you would like to use.';
+//			$form['theme_specific']['cti_flex_color1']['#prefix'] = '<fieldset class="collapsible"><legend>Custom color settings</legend><br />These values will override any colors in your selected design. Leave blank to use defaults.<br /><div style="margin: 20px 0 0 20px;"><b>BACKGROUND COLORS</b>';
+
+
+			
+	break;
+  }
+
+}

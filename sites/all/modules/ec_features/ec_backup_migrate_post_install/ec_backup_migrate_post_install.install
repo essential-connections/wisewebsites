@@ -1,0 +1,29 @@
+<?php
+// $Id: ec_backup_migrate_post_install.install,v 1.0 2011/02/27 17:31:49 s Exp $
+
+
+function ec_backup_migrate_post_install_install() {
+	
+  $site_path = conf_path();
+  
+  $result = db_query("REPLACE INTO {backup_migrate_destinations} (destination_id, name, type, location, settings) VALUES
+  ('manual', 'Manual Backups Directory', 'file_manual', 'backups/".$site_path."/manual', 'a:2:{s:5:\"chmod\";s:0:\"\";s:5:\"chgrp\";s:0:\"\";}'),
+  ('scheduled', 'Scheduled Backups Directory', 'file_scheduled', 'backups/".$site_path."/scheduled', 'a:2:{s:5:\"chmod\";s:0:\"\";s:5:\"chgrp\";s:0:\"\";}');");
+  if($result != 1) watchdog('ec_backup_migrate_post_install', 'problem replacing backup_migrate_destinations in hook_install', array(), WATCHDOG_ERROR, NULL);
+  
+  $result = db_query("REPLACE INTO {backup_migrate_profiles} (profile_id, name, filename, append_timestamp, timestamp_format, filters) VALUES
+  ('default', 'Default Settings', '[site-url]', 1, 'Y-m-d\\TH-i-s', 'a:11:{s:11:\"compression\";s:4:\"none\";s:21:\"notify_success_enable\";i:0;s:20:\"notify_success_email\";s:42:\"support@.essential-connections.com\";s:21:\"notify_failure_enable\";i:0;s:20:\"notify_failure_email\";s:42:\"support@.essential-connections.com\";s:18:\"utils_site_offline\";i:0;s:26:\"utils_site_offline_message\";s:106:\"<p>\r\n	this site is currently under maintenance. We should be back shortly. Thank you for your patience.</p>\r\n\";s:14:\"exclude_tables\";a:0:{}s:13:\"nodata_tables\";a:22:{s:9:\"accesslog\";s:9:\"accesslog\";s:5:\"cache\";s:5:\"cache\";s:11:\"cache_block\";s:11:\"cache_block\";s:14:\"cache_browscap\";s:14:\"cache_browscap\";s:13:\"cache_content\";s:13:\"cache_content\";s:12:\"cache_filter\";s:12:\"cache_filter\";s:10:\"cache_form\";s:10:\"cache_form\";s:18:\"cache_htmlpurifier\";s:18:\"cache_htmlpurifier\";s:14:\"cache_location\";s:14:\"cache_location\";s:10:\"cache_menu\";s:10:\"cache_menu\";s:10:\"cache_page\";s:10:\"cache_page\";s:11:\"cache_rules\";s:11:\"cache_rules\";s:14:\"cache_uc_price\";s:14:\"cache_uc_price\";s:11:\"cache_views\";s:11:\"cache_views\";s:16:\"cache_views_data\";s:16:\"cache_views_data\";s:13:\"devel_queries\";s:13:\"devel_queries\";s:11:\"devel_times\";s:11:\"devel_times\";s:14:\"search_dataset\";s:14:\"search_dataset\";s:12:\"search_index\";s:12:\"search_index\";s:12:\"search_total\";s:12:\"search_total\";s:8:\"sessions\";s:8:\"sessions\";s:8:\"watchdog\";s:8:\"watchdog\";}s:17:\"utils_lock_tables\";i:0;s:17:\"exclude_filepaths\";s:41:\"<p>\r\n	backup_migrate imagecache css</p>\r\n\";}');");
+  if($result != 1) watchdog('ec_backup_migrate_post_install', 'problem replacing backup_migrate_profiles in hook_install', array(), WATCHDOG_ERROR, NULL);
+  
+  $result = db_query("REPLACE INTO {backup_migrate_schedules} (schedule_id, name, source_id, destination_id, profile_id, keep, period, last_run, enabled, cron) VALUES
+  ('b917dc594105d69786164a8f91b5b146', 'Daily', 'db', 'scheduled', 'default', 5, 86400, 0, 1, 0);");
+  if($result != 1) watchdog('ec_backup_migrate_post_install', 'problem replacing backup_migrate_schedules in hook_install', array(), WATCHDOG_ERROR, NULL);
+  
+}
+
+function ec_backup_migrate_post_install_uninstall() {
+  
+  
+}
+
+

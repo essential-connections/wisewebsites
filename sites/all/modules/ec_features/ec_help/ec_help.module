@@ -1,0 +1,184 @@
+<?php
+
+/**
+ * Implementation of hook_theme_registry_alter().
+ */
+function ec_help_theme_registry_alter(&$theme_registry) {
+  // Make the array of the page hook's preprocess functions easier to
+  // get to.
+  $funcs = &$theme_registry['page']['preprocess functions'];
+  
+  // add js first
+  array_unshift($funcs, 'ec_help_preprocess_page_js');
+
+  // Move 'ec_help_preprocess_page' to be the last callback
+  // function.
+  $key = array_search('ec_help_preprocess_page', $funcs);
+  unset($funcs[$key]);
+  array_push($funcs, 'ec_help_preprocess_page');
+}
+function ec_help_preprocess_page_js() {
+
+  $jspath = drupal_get_path('module', 'ec_help');
+  drupal_add_js("$jspath/ec_help.js", 'module', 'footer', TRUE);
+  
+}
+/**
+ * Preprocess function for the page theme hook.
+ *
+ * This function doesn't use the arguments, and doesn't return
+ * anything.  It adds JS and CSS to the page.  It must do this before
+ * the page hook's other preprocess functions, so that the JS and CSS
+ * is added before they render $styles, $script and $closure.
+ */
+function ec_help_preprocess_page(&$variables) {
+
+  $jspath = drupal_get_path('module', 'ec_help');
+  drupal_add_js("$jspath/ec_help.js", 'module', 'footer', TRUE);
+  
+  //drupal_set_message(':::'.$variables['help']);
+  $variables['help'] = '';
+  if(user_access('access help')){
+    $help = ec_help_get_page_help();
+    if($help['page_link']){
+	  $variables['help'] = '<p>'.l('[Help for this page]',$help['page_link'],array('attributes' => array('class' => 'ec-help-link ec-help-link-page','style' => 'text-align:right;'))).'</p>';
+    }
+  }
+  
+}
+
+/**
+ * Implementation of hook_help().
+ */
+/*function ec_help_help($path, $arg) {
+  $output = '';
+
+  if(user_access('access help')){
+    $help = ec_help_get_page_help();
+    if($help['page_link']){
+	  $output = l('[Help for this page]',$help['page_link'],array('attributes' => array('class' => 'ec-help-link','style' => 'float:right;')));
+    }
+  }
+  return $output;
+}*/
+
+/**
+ * Implementation of hook_perm().
+ */
+function ec_help_perm() {
+  return array('access help');
+}
+
+/**
+ * Implementation of hook_menu().
+ */
+function ec_help_menu() {
+  $items = array();
+
+     $items['http://help.wisewebsites.co'] = array(
+       'title' => 'Help',
+       'page callback' => 'ec_help_view',
+       'access callback' => 'user_access',
+       'access arguments' => array('access help'),
+       'type' => MENU_NORMAL_ITEM,
+       'weight' => 66,
+	   'options' => array('attributes' => array('class' => 'ec-help-link')),
+     );
+     $items['http://help.wisewebsites.co/content/getting-started'] = array(
+       'title' => 'Getting Started',
+       'page callback' => 'ec_help_view',
+       'access callback' => 'user_access',
+       'access arguments' => array('access help'),
+       'type' => MENU_NORMAL_ITEM,
+       'weight' => -99999,
+	   'options' => array('attributes' => array('class' => 'ec-help-link')),
+	   //'menu_name' => 'primary-links',
+     );
+     /*$items['http://www.essential-connections.com/user'] = array(
+       'title' => 'Control Panel',
+       'page callback' => 'ec_help_view',
+       'access callback' => 'user_access',
+       'access arguments' => array('access help'),
+       'type' => MENU_NORMAL_ITEM,
+       'weight' => 99999,
+	   'options' => array('attributes' => array('class' => 'ec-help-link')),
+     );*/
+     /*$items['help/all'] = array(
+       'title' => 'General Help',
+       'page callback' => 'ec_help_view',
+       'access callback' => TRUE,
+       'type' => MENU_NORMAL_ITEM,
+       'weight' => 1
+     );
+     $items['help/page'] = array(
+       'title' => 'Help for this page',
+       //'page callback' => 'views_embed_view',
+       //'page arguments' => array('add_member','page'),
+       'access callback' => TRUE,
+       //'access arguments' => array(1),
+       'type' => MENU_NORMAL_ITEM,
+       'weight' => 2
+     );*/
+
+  return $items;
+}
+
+/**
+ * Implementation of hook_menu_link_alter().
+ */
+/*function ec_help_menu_link_alter(&$item, $menu) {
+  //drupal_set_message('menu:<pre>'.print_r($item).'</pre>' );
+  //global $user;
+  if ($item['link_path'] == 'help') {
+    $url = variable_get('ec_help_url', 'http://help.essential-connections.com');
+    $item['link_path'] = $url;
+    $item['options']['attributes']['class'] = (($item['options']['attributes']['class'])?' ':'') . 'ec-help-link';
+  }
+}*/
+
+function ec_help_get_page_help(){
+
+  $args = arg();
+
+  // add node type to node edit paths
+  if($args[0] == 'node' && $args[1] > 0){
+    $node = node_load($args[1]);
+    if($args[2] == 'edit'){
+      $args[3] = $node->type;
+    }
+  }
+  
+  // replace any numeric args with wildcard '*'
+  foreach ($args as $key => $val){
+    if(is_numeric($val)) $args[$key] = '*';
+  }
+
+  $path = implode("-", $args);
+  $url = variable_get('ec_help_url', 'http://help.wisewebsites.co');
+  $feed_url = $url.'/get_help_link/'.$path;
+  $rawFeed = file_get_contents($feed_url);
+  if($rawFeed){
+    $xml = new SimpleXmlElement($rawFeed); 
+    foreach ($xml->channel->item as $item){
+      $page_link = $item->link;
+    }
+  }
+  
+  $help = array();
+  $help['url'] = $url;
+  $help['page_link'] = $page_link;
+  return $help;
+}
+
+// dummy page callback for help menu items
+function ec_help_view(){
+  $output = 'help';
+  return $output;
+}
+
+function ec_help_display_block(){
+	
+	$content = '<a href="http://help.wisewebsites.co/start" class="ec-help-link" >Getting Started</a>';
+	
+	return $content;
+}

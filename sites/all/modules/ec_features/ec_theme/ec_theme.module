@@ -1,0 +1,62 @@
+<?php
+
+/**
+ * Implementation of hook_perm().
+ */
+function ec_theme_perm() {
+  return array('administer theme');
+}
+
+/**
+ * Implementation of hook_form_alter().
+ */
+function ec_theme_form_alter(&$form, $form_state, $form_id) {
+
+  global $user;
+  global $base_path;
+
+  switch($form_id){
+    case 'system_themes_form':
+    //if($user->uid == 1){
+        //drupal_set_message('<pre>form - ' . print_r($form, TRUE) . '</pre>');
+    //}  
+
+        unset($form['buttons']['reset']);
+      
+      break;
+    case 'system_theme_settings':
+
+        $form['theme_settings']['toggle_mission']['#default_value'] = 0;
+		$form['theme_settings']['toggle_mission']['#type'] = 'hidden';
+
+		$form['popups']['#type'] = 'value';
+		$form['popups']['popups_content_selector']['#type'] = 'value';
+		$form['popups']['popups_content_selector']['#default_value'] = 'div.left-corner > div.clear-block:last';
+
+		$form['logo']['#description'] = '';
+		$form['logo']['default_logo']['#type'] = 'hidden';
+		$form['logo']['logo_path']['#type'] = 'hidden';
+		if($form['logo']['logo_path']['#default_value']){
+			$form['logo']['logo_view'] = array(
+				'#type' => 'markup',
+				'#title' => 'Preview',
+				'#value' => 'Current logo:<div><img src="'.$base_path.$form['logo']['logo_path']['#default_value'].'" ></img></div>',
+			);
+		}
+		$form['logo']['logo_upload']['#description'] = '';
+
+		$form['favicon']['default_favicon']['#type'] = 'hidden';
+		$form['favicon']['favicon_path']['#type'] = 'hidden';
+		if($form['logo']['favicon_path']['#default_value']){
+			$form['favicon']['favicon_view'] = array(
+				'#type' => 'markup',
+				'#title' => 'Preview',
+				'#value' => 'Current shortcut icon:<div><img src="'.$base_path.$form['logo']['favicon_path']['#default_value'].'" ></img></div>',
+			);
+		}
+		$form['favicon']['favicon_upload']['#description'] = '';
+
+	break;
+  }
+
+}

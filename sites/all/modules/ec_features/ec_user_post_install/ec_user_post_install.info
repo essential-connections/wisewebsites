@@ -1,0 +1,8 @@
+core = "6.x"
+dependencies[] = "profile"
+description = "a hook_install after profile is installed"
+name = "ec_user_post_install"
+package = "Features"
+project = "ec_user_post_install"
+version = "6.x-1.0"
+

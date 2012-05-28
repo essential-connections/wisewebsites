@@ -1,0 +1,20 @@
+<?php
+// $Id: ec_base.install,v 1.0 2011/02/27 17:31:49 s Exp $
+
+
+function ec_base_install() {
+	
+	db_query("UPDATE {system} SET weight = 999 WHERE type = 'module' AND name = 'ec_base'");
+	
+	// insert default roles with rid to match other settings like in permissions_lock module
+    db_query("REPLACE INTO {role} (rid, name) VALUES (3, 'advanced user'),(4, 'manager'),(5, 'administrator'),(6, 'regular user')");
+    db_query("REPLACE INTO {users_roles} (uid, rid) VALUES (3, 5)");  
+  
+}
+
+function ec_base_uninstall() {
+  
+  
+}
+
+

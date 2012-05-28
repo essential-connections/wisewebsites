@@ -1,0 +1,33 @@
+<?php
+
+include_once('ec_theme_zeropoint.features.inc');
+
+function ec_theme_zeropoint_form_alter(&$form, $form_state, $form_id) {
+
+  //global $user;
+  //global $base_path;
+  //$node = $form['#node'];
+
+  switch($form_id){
+    case 'system_themes_form':
+        
+        //$form['zeropoint']['info']['#value']['description'] = '';
+
+        //$form['zeropoint']['info']['#value']['version'] = '';
+      
+      break;
+    case 'system_theme_settings':
+
+		// zeropoint
+		$form['theme_specific']['tnt_container']['layout_settings']['headerimg']['#type'] = 'hidden';
+		$form['theme_specific']['tnt_container']['layout_settings']['cssPreload']['#type'] = 'hidden';
+		$form['theme_specific']['tnt_container']['general_settings']['breadcrumb']['#type'] = 'hidden';
+		$form['theme_specific']['tnt_container']['general_settings']['mission_statement']['#type'] = 'hidden';
+		$form['theme_specific']['tnt_container']['node_type_specific']['#type'] = 'hidden';
+		$form['theme_specific']['tnt_container']['seo']['#type'] = 'hidden';
+		$form['theme_specific']['tnt_container']['themedev']['#type'] = 'hidden';
+			
+	break;
+  }
+
+}

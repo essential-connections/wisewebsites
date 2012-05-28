@@ -1,0 +1,28 @@
+<?php
+
+include_once('ec_theme_mix_and_match.features.inc');
+
+function ec_theme_mix_and_match_form_alter(&$form, $form_state, $form_id) {
+
+  switch($form_id){
+    case 'system_themes_form':
+
+        //$form['mix_and_match']['info']['#value']['description'] = '';
+
+        //$form['mix_and_match']['info']['#value']['version'] = '';
+		
+		
+      
+      break;
+    case 'system_theme_settings':
+      //global $user;
+      //if($user->uid == 1){
+        //drupal_set_message('<pre>form - ' . print_r($form['theme_specific']['mix_and_match_colors'], TRUE) . '</pre>');
+      //}  
+		$form['theme_specific']['mix_and_match_colors']['mix_and_match_corners']['#description'] = 'This will add rounded corners to blocks and some other elements. Corners are CSS3-based in compliant browsers.';
+        $form['theme_specific']['mix_and_match_colors']['#description'] = '';
+			
+	break;
+  }
+
+}

@@ -1,0 +1,29 @@
+<?php
+
+
+function ec_taxonomy_install() {
+	
+  //global $base_url;
+  
+  $result = db_query("REPLACE INTO {vocabulary} (vid, name, description, help, relations, hierarchy, multiple, required, tags, module, weight) VALUES
+(2, 'Category', '', 'Enter a comma separated list of key words to categorize this content', 1, 0, 0, 0, 1, 'taxonomy', 0);");
+  if($result != 1) watchdog('ec_taxonomy_install', 'problem replacing {vocabulary} in hook_install', array(), WATCHDOG_ERROR,NULL);
+  
+  $result = db_query("REPLACE INTO {vocabulary_node_types} (vid, type) VALUES
+(2, 'blog'),
+(2, 'event'),
+(2, 'group'),
+(2, 'page'),
+(2, 'poll'),
+(2, 'webform');");
+  if($result != 1) watchdog('ec_taxonomy_install', 'problem replacing {vocabulary_node_types} in hook_install', array(), WATCHDOG_ERROR, NULL);
+  
+
+}
+
+function ec_taxonomy_uninstall() {
+  
+  
+}
+
+

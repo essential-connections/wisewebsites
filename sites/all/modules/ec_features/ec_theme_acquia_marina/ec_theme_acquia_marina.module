@@ -1,0 +1,25 @@
+<?php
+
+include_once('ec_theme_acquia_marina.features.inc');
+
+
+function ec_theme_acquia_marina_form_alter(&$form, $form_state, $form_id) {
+
+  //global $user;
+  //global $base_path;
+
+  switch($form_id){
+    case 'system_themes_form':
+        
+        $form['acquia_marina']['info']['#value']['description'] = '';
+
+        //$form['acquia_marina']['info']['#value']['version'] = '';
+      
+      break;
+    case 'system_theme_settings':
+
+			
+	break;
+  }
+
+}

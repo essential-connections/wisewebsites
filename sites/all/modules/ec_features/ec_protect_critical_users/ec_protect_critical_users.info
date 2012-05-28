@@ -1,0 +1,7 @@
+core = "6.x"
+dependencies[] = "protect_critical_users"
+description = "Protect user 1"
+name = "Protect critical users"
+package = "Features"
+project = "ec_protect_critical_users"
+version = "6.x-1.0"

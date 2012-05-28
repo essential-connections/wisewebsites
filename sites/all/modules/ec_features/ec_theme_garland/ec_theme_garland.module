@@ -1,0 +1,23 @@
+<?php
+
+function ec_theme_garland_form_alter(&$form, $form_state, $form_id) {
+
+  //global $user;
+  //global $base_path;
+  //$node = $form['#node'];
+
+  switch($form_id){
+    case 'system_themes_form':
+
+        //$form['garland']['info']['#value']['description'] = '';
+
+        //$form['garland']['info']['#value']['version'] = '';
+      
+      break;
+    case 'system_theme_settings':
+
+			
+	break;
+  }
+
+}

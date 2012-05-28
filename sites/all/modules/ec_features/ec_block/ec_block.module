@@ -1,0 +1,47 @@
+<?php
+
+function ec_block_preprocess_block_admin_display_form(&$variables) {
+  global $user;
+  //if($user->uid == 1) drupal_set_message('<b>blocks:'.$key.':</b><pre>'.print_r($variables['block_listing']['-1'], TRUE) .'</pre>');
+  if($user->uid > 1){
+  foreach ($variables['block_listing']['-1'] as $key => $val) {
+    switch($key){
+      case 'menu_menu-administration':
+      case 'user_1':
+      case 'views_node_gallery-block_1':
+      case 'jcarousel_block_0':
+      case 'og_views_0':
+      case 'og_views_1':
+      case 'forum_0':
+      case 'diff_inline':
+      case 'book_0':
+      case 'locale_0':
+      case 'user_visits_0':
+      case 'logintoboggan_0':
+      case 'user_visits_1':
+      case 'user_visits_adv_0':
+      case 'user_visits_adv_1':
+      case 'forum_1':
+      case 'views_signup_available_signups-block':
+      case 'views_signup_current_signups-block':
+      case 'heartbeat_2':
+      case 'heartbeat_0':
+      case 'heartbeat_1':
+      case 'eit_groups_0':
+      case 'system_0':
+      case 'node_0':
+	  case 'menu_devel':
+	  case 'devel_2':
+	  case 'devel_0':
+      case 'calendar_0':
+      case 'user_import_og_0':
+      case 'heartbeat_singleheartbeat':
+      case 'clickpath_0':
+      case 'notifications_ui_0':
+        unset($variables['block_listing']['-1'][$key]);
+        break;
+    }
+  }
+  }
+}
+

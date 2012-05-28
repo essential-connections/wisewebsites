@@ -1,0 +1,9 @@
+core = "6.x"
+dependencies[] = "features"
+description = "Essential-Connections online help"
+features[user_permission][] = "access help"
+name = "help"
+package = "Features"
+project = "ec_help"
+version = "6.x-1.0"
+

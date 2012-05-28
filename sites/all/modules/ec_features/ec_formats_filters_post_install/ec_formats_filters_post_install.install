@@ -1,0 +1,61 @@
+<?php
+
+
+function ec_formats_filters_post_install_install() {
+	
+	
+	$result = db_query("REPLACE INTO {filters} (fid, format, module, delta, weight) VALUES
+	(15, 1, 'filter', 3, 10),
+	(14, 1, 'htmlpurifier', 0, 10),
+	(8, 3, 'php', 0, 0),
+	(11, 2, 'filter', 3, 10),
+	(12, 2, 'filter', 1, 1),
+	(13, 2, 'filter', 2, 0),
+	(16, 1, 'filter', 0, 1),
+	(17, 1, 'filter', 1, 2),
+        (37, 2, 'pathologic', 0, 10),
+        (43, 1, 'pathologic', 0, 10),
+	(18, 1, 'filter', 2, 0);
+	");
+	if($result != 1) watchdog('ec_formats_filters_post_install', 'problem replacing filters in hook_install', array(), WATCHDOG_ERROR,NULL);
+
+	/*
+	db_query("REPLACE INTO {filter_formats} (format, name, roles, cache) VALUES
+	(1, 'Filtered HTML', ',1,', 1),
+	(2, 'Full HTML', ',1,2,5,3,4,', 0),
+	(3, 'PHP code', '', 0),
+	(4, 'Messaging plain text', '', 0);
+	");
+	if($result != 1) watchdog('ec_formats_filters_post_install', 'problem replacing filter_formats in hook_install', array(), WATCHDOG_ERROR,NULL);
+	*/
+	
+	db_query("REPLACE INTO {better_formats_defaults} (rid, type, format, type_weight, weight) VALUES
+	(1, 'node', 1, 1, 0),
+	(1, 'comment', 1, 1, 0),
+	(1, 'block', 0, 1, 25),
+	(2, 'node', 0, 1, 0),
+	(2, 'comment', 0, 1, 0),
+	(2, 'block', 0, 1, 25),
+	(5, 'node', 0, 1, 0),
+	(5, 'comment', 0, 1, 0),
+	(5, 'block', 0, 1, 25),
+	(3, 'node', 0, 1, 0),
+	(3, 'comment', 0, 1, 0),
+	(3, 'block', 0, 1, 25),
+	(4, 'node', 0, 1, 0),
+	(4, 'comment', 0, 1, 0),
+	(4, 'block', 0, 1, 25),
+	(6, 'node', 0, 1, 25),
+	(6, 'comment', 0, 1, 25),
+	(6, 'block', 0, 1, 25);
+	");
+    if($result != 1) watchdog('ec_formats_filters_post_install', 'problem replacing better_formats_defaults in hook_install', array(), WATCHDOG_ERROR,NULL);
+  
+
+}
+
+function ec_formats_filters_post_install_uninstall() {
+  
+  
+}
+

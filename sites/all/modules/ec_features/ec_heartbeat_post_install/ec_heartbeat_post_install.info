@@ -1,0 +1,7 @@
+core = "6.x"
+description = "a hook_install after heartbeat is installed"
+name = "ec_heartbeat_post_install"
+package = "Features"
+project = "ec_heartbeat_post_install"
+version = "6.x-1.0"
+

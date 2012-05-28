@@ -1,0 +1,79 @@
+<?php
+
+include_once('ec_backup_migrate.features.inc');
+
+
+/**
+ * Implementation of hook_menu().
+ */
+function ec_backup_migrate_menu() {
+  $items = array();
+
+    global $user;
+ 
+  /*
+    $items['admin/settings/site_settings'] = array(
+       'title' => 'Site Settings',
+       'description' => 'Edit site title, slogan, footer, timezone and home page style',
+       'page callback' => 'drupal_get_form',
+       'page arguments' => array('ec_base_site_settings'),
+       'access callback' => 'user_access',
+       'access arguments' => array('administer site configuration'),
+       'type' => MENU_NORMAL_ITEM,
+       'weight' => 1
+    );
+  */
+  
+  return $items;
+}
+
+/**
+ * Implementation of hook_menu_link_alter().
+ */
+ /*
+function ec_backup_migrate_menu_link_alter(&$item, $menu) {
+  
+  switch($item['link_path']) {
+    case 'admin/content/backup_migrate':
+	  $item['title'] = 'Backup';
+	break;
+    case 'admin/content/backup_migrate/restore':
+	  //dpm($item);
+	  $item['hidden'] = 1;
+	  $item['access callback'] = 'ec_backup_migrate_backup_access';
+	break;
+    case 'admin/content/backup_migrate/export/advanced':
+	  $item['access callback'] = 'ec_backup_migrate_backup_access';
+	break;
+  }
+}
+function ec_backup_migrate_backup_access() {
+	return user_access('administer backup and migrate');
+}
+*/
+
+/**
+ * Implementation of hook_form_alter().
+ */
+function ec_backup_migrate_form_alter(&$form, $form_state, $form_id) {
+  //dpm($form);
+
+  //switch($form_id){
+    //case 'user_profile_form':
+	//  $form['messaging']['og_notifications_autosubscribe']['#description'] = 'Checking this box allows you to automatically subscribe to all content in any group that you join.';
+	 // break;
+  //}
+  
+}
+
+/*
+function ec_backup_migrate_backup_migrate_destinations_alter($type, &$data) {
+  //dpm($type);
+  //drupal_set_message("data:".$data);
+  
+  watchdog('ec_backup_migrate', ' in hook_backup_migrate_destinations_alter', array(), WATCHDOG_ERROR, NULL);
+  
+}
+*/
+
+

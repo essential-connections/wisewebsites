@@ -1,0 +1,47 @@
+<?php
+
+
+function ec_filefield_post_install_install() {
+	
+  $site_path = conf_path();
+  
+  $result = db_query("CREATE TABLE IF NOT EXISTS {filefield_paths} (
+  type varchar(32) NOT NULL default '',
+  field varchar(32) NOT NULL default '',
+  filename mediumtext NOT NULL,
+  filepath mediumtext NOT NULL,
+  UNIQUE KEY type_field (type,field)
+  ) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
+  if($result != 1) watchdog('ec_filefield_post_install', 'problem replacing filefield_paths structure in hook_install', array(), WATCHDOG_ERROR, NULL);
+    
+  $result = db_query("REPLACE INTO {filefield_paths} (type, field, filename, filepath) VALUES
+('page', 'field_file', '%s', '%s'),
+('page', 'field_image', '%s', '%s'),
+('page', 'field_video', '%s', '%s'),
+('event', 'field_file', '%s', '%s'),
+('event', 'field_image', '%s', '%s'),
+('event', 'field_video', '%s', '%s'),
+('blog', 'field_file', '%s', '%s'),
+('blog', 'field_image', '%s', '%s'),
+('blog', 'field_video', '%s', '%s');
+"
+,'a:4:{s:5:"value";s:60:"[filefield-onlyname-original].[filefield-extension-original]";s:7:"tolower";i:0;s:8:"pathauto";i:0;s:13:"transliterate";i:1;}', 'a:4:{s:5:"value";s:18:"home/user[user-id]";s:7:"tolower";i:0;s:8:"pathauto";i:0;s:13:"transliterate";i:0;}'
+,'a:4:{s:5:"value";s:60:"[filefield-onlyname-original].[filefield-extension-original]";s:7:"tolower";i:0;s:8:"pathauto";i:0;s:13:"transliterate";i:1;}', 'a:4:{s:5:"value";s:18:"home/user[user-id]";s:7:"tolower";i:0;s:8:"pathauto";i:0;s:13:"transliterate";i:0;}'
+,'a:4:{s:5:"value";s:60:"[filefield-onlyname-original].[filefield-extension-original]";s:7:"tolower";i:0;s:8:"pathauto";i:0;s:13:"transliterate";i:1;}', 'a:4:{s:5:"value";s:18:"home/user[user-id]";s:7:"tolower";i:0;s:8:"pathauto";i:0;s:13:"transliterate";i:0;}'
+,'a:4:{s:5:"value";s:60:"[filefield-onlyname-original].[filefield-extension-original]";s:7:"tolower";i:0;s:8:"pathauto";i:0;s:13:"transliterate";i:1;}', 'a:4:{s:5:"value";s:18:"home/user[user-id]";s:7:"tolower";i:0;s:8:"pathauto";i:0;s:13:"transliterate";i:0;}'
+,'a:4:{s:5:"value";s:60:"[filefield-onlyname-original].[filefield-extension-original]";s:7:"tolower";i:0;s:8:"pathauto";i:0;s:13:"transliterate";i:1;}', 'a:4:{s:5:"value";s:18:"home/user[user-id]";s:7:"tolower";i:0;s:8:"pathauto";i:0;s:13:"transliterate";i:0;}'
+,'a:4:{s:5:"value";s:60:"[filefield-onlyname-original].[filefield-extension-original]";s:7:"tolower";i:0;s:8:"pathauto";i:0;s:13:"transliterate";i:1;}', 'a:4:{s:5:"value";s:18:"home/user[user-id]";s:7:"tolower";i:0;s:8:"pathauto";i:0;s:13:"transliterate";i:0;}'
+,'a:4:{s:5:"value";s:60:"[filefield-onlyname-original].[filefield-extension-original]";s:7:"tolower";i:0;s:8:"pathauto";i:0;s:13:"transliterate";i:1;}', 'a:4:{s:5:"value";s:18:"home/user[user-id]";s:7:"tolower";i:0;s:8:"pathauto";i:0;s:13:"transliterate";i:0;}'
+,'a:4:{s:5:"value";s:60:"[filefield-onlyname-original].[filefield-extension-original]";s:7:"tolower";i:0;s:8:"pathauto";i:0;s:13:"transliterate";i:1;}', 'a:4:{s:5:"value";s:18:"home/user[user-id]";s:7:"tolower";i:0;s:8:"pathauto";i:0;s:13:"transliterate";i:0;}'
+,'a:4:{s:5:"value";s:60:"[filefield-onlyname-original].[filefield-extension-original]";s:7:"tolower";i:0;s:8:"pathauto";i:0;s:13:"transliterate";i:1;}', 'a:4:{s:5:"value";s:18:"home/user[user-id]";s:7:"tolower";i:0;s:8:"pathauto";i:0;s:13:"transliterate";i:0;}'
+);
+  if($result != 1) watchdog('ec_filefield_post_install', 'problem replacing filefield_paths data in hook_install', array(), WATCHDOG_ERROR, NULL);
+  
+}
+
+function ec_filefield_post_install_uninstall() {
+  
+  
+}
+
+

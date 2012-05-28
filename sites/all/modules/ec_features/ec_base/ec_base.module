@@ -1,0 +1,449 @@
+<?php
+
+
+/**
+ * Implementation of hook_theme_registry_alter().
+ */
+function ec_base_theme_registry_alter(&$theme_registry) {
+  $funcs = &$theme_registry['page']['preprocess functions'];
+  $key = array_search('ec_base_preprocess_page', $funcs);
+  unset($funcs[$key]);
+  array_unshift($funcs, 'ec_base_preprocess_page');
+
+}
+/**
+ * Preprocess function for the page theme hook.
+ *
+ */
+function ec_base_preprocess_page(&$variables) {
+
+  $path = implode("/", arg());
+  
+  // keep default drupal page 'Welcome to your new Drupal site' from ever showing
+  if($path == 'node'){
+    drupal_goto('');
+  }
+  
+  if((arg(0) == 'admin' || arg(0) == 'administer' || arg(0) == 'administration') && arg(2) != 'block'){
+    $variables['show_blocks'] = FALSE;
+    //unset($variables['right']);
+    //$variables['layout'] = 'left';
+  }
+  
+  // this needs to be in page.tpl.php right after <body>, no way to add it to the very top from here
+  /*if (variable_get('eit_ads','1') == 1){
+    $variables['header'] = ('<div id="ec_ads_top" style="text-align:center;float:top;">
+       <script type="text/javascript"><!--
+google_ad_client = "pub-9646714435306637";
+google_ad_slot = "3219472777";
+google_ad_width = 728;
+google_ad_height = 90;
+//-->
+</script> <script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+        </div>');
+  }*/
+
+}
+function ec_base_preprocess_node(&$variables) {
+  if(arg(0) == 'node' && arg(1) > 0 && !arg(2)){
+    if($variables['node']->field_show_auth_info['0']['value'] == 1){
+      $variables['submitted'] = FALSE;
+    }
+  }
+}
+////
+/**
+ * Implementation of hook_simplemenu_tree_alter().
+ */
+/*function ec_base_simplemenu_tree_alter(&$tree) {
+  drupal_set_message('<b>ftree:</b><pre>'.print_r($tree, TRUE) .'</pre>');
+
+  // Automatically include action files.
+  //$files = file_scan_directory(drupal_get_path('module', 'eit_groups'), '(.*).action.inc$');
+  //if ($files) foreach ($files as $file) {
+  //  require_once($file->filename);
+  //}
+}*/
+
+
+/**
+ * Implementation of hook_footer().
+ */
+function ec_base_footer($main = 0) {
+  $output = '';
+  
+  
+  if (variable_get('ec_footer','1') == 1){
+     $output .= '<div id="ec_logo_footer" style="background-color:#000;text-align:right;margin-top:20px;">
+      <div><a href="http://www.essential-connections.com" ><img src="http://www.essential-connections.com/ec_logo_footer.png"></img></a></div>
+    </div>';
+  }
+  return $output;
+}
+
+/**
+ * Implementation of hook_help().
+ */
+function ec_base_help($path, $arg) {
+  $output = '';
+  
+
+
+  if(!(variable_get('ec_install_done','0') == '1')){
+    variable_set('ec_install_done','1');
+
+	  module_disable(array(
+	  'hosting_profile_roles',
+	  ));
+
+	  drupal_flush_all_caches();
+        
+    if(module_exists('jqp')){
+      module_load_include('inc', 'jqp', 'jqp.admin');
+      jqp_rebuild_cache();
+    }
+
+	  db_query("UPDATE {system} SET status = 1 WHERE type = 'theme' and name = '%s'", 'zeropoint');
+	  db_query("UPDATE {system} SET status = 1 WHERE type = 'theme' and name = '%s'", 'acquia_marina');
+	  db_query("UPDATE {system} SET status = 1 WHERE type = 'theme' and name = '%s'", 'acquia_prosper');
+	  db_query("UPDATE {system} SET status = 1 WHERE type = 'theme' and name = '%s'", 'bluemarine');
+	  db_query("UPDATE {system} SET status = 1 WHERE type = 'theme' and name = '%s'", 'chameleon');
+	  db_query("UPDATE {system} SET status = 1 WHERE type = 'theme' and name = '%s'", 'cti_flex');
+	  db_query("UPDATE {system} SET status = 1 WHERE type = 'theme' and name = '%s'", 'garland');
+  	db_query("UPDATE {system} SET status = 1 WHERE type = 'theme' and name = '%s'", 'marvin');
+  	db_query("UPDATE {system} SET status = 1 WHERE type = 'theme' and name = '%s'", 'minnelli');
+  	db_query("UPDATE {system} SET status = 1 WHERE type = 'theme' and name = '%s'", 'mix_and_match');
+  	db_query("UPDATE {system} SET status = 1 WHERE type = 'theme' and name = '%s'", 'pixture_reloaded');
+  	db_query("UPDATE {system} SET status = 1 WHERE type = 'theme' and name = '%s'", 'pushbutton');
+
+		/*
+		$node = new stdClass();
+		$node->type = 'page';
+		$node->title = 'Welcome';
+		$node->promote = 1;
+		$node->sticky = 1;
+		node_save($node);
+		*/
+	
+	if(module_exists('feeds')){
+		/*$node = new stdClass();
+		$node->type = 'feed';
+		$node->title = 'Guides';
+		$node->promote = 1;
+		$node->feeds['FeedsHTTPFetcher']['source'] = 'http://help.essential-connections.com/guides/rss.xml';
+		node_save($node);
+		
+		// Using Batch API (user will see a progress bar).
+		feeds_batch_set(t('Importing Guides'), 'import', 'feed', $node->nid);
+		// Not using Batch API (complete import within current page load)
+		//while (FEEDS_BATCH_COMPLETE != feeds_source('my_importer_id', $node->nid)->import());
+		*/
+		
+		/*$form_state = array();
+		module_load_include('inc', 'node', 'node.pages');
+		$node = array('type' => 'feed');
+		$form_state['values']['title'] = 'Guides';
+		$form_state['values']['body'] = '';
+		$form_state['values']['name'] = 'admin';
+		$form_state['values']['promote'] = 1;
+		$form_state['values']['op'] = t('Save');
+		$form_state['values']['feeds']['FeedsHTTPFetcher']['source'] = 'http://help.essential-connections.com/guides/rss.xml';
+		drupal_execute('feed_node_form', $form_state, (object)$node);
+		*/
+	}
+	
+	watchdog('ec_base', 'install done', array(), WATCHDOG_INFO,NULL);
+  }
+  return $output;
+}
+
+/**
+ * Implementation of hook_perm().
+ */
+function ec_base_perm() {
+  return array('access administration');
+}
+
+/**
+ * Implementation of hook_menu().
+ */
+function ec_base_menu() {
+  $items = array();
+
+    global $user;
+	
+  /*$items['user/login'] = array(
+    'title' => 'Log in',
+    'access callback' => 'user_is_anonymous',
+    'type' => MENU_NORMAL_ITEM,
+	'menu_name' => 'primary-links',
+	'weight' => 51
+  );*/
+  
+  // admin page override
+    $items['admin'] = array(
+       'title' => 'Administer',
+       'description' => '',
+       'page callback' => 'ec_base_admin_page',
+       'access callback' => 'user_access',
+       'access arguments' => array('access administration pages'),
+       'type' => MENU_NORMAL_ITEM,
+       'weight' => 1
+    );
+ 
+  // SITE SETTINGS
+    $items['admin/settings/site_settings'] = array(
+       'title' => 'Site Settings',
+       'description' => 'Edit site title, slogan, footer, timezone and home page style',
+       'page callback' => 'drupal_get_form',
+       'page arguments' => array('ec_base_site_settings'),
+       'access callback' => 'user_access',
+       'access arguments' => array('administer site configuration'),
+       'type' => MENU_NORMAL_ITEM,
+       'weight' => 1
+    );
+
+  return $items;
+}
+function ec_base_menu_alter(&$items) {
+  
+  $items['admin/user/user_import/configure']['access callback'] = 'ec_base_user_import_configure_access';
+
+  $items['admin/content/backup_migrate/restore']['access callback'] = 'ec_base_backup_migrate_restore_access';
+  $items['admin/content/backup_migrate/export/advanced']['access callback'] = 'ec_base_backup_migrate_advanced_access';
+  
+}
+function ec_base_auth_access() {
+	global $user;
+	return FALSE;//($user-uid > 0) ? TRUE:FALSE;
+}
+function ec_base_user_import_configure_access() {
+	global $user;
+	return ($user->uid == 1) ? TRUE:FALSE;
+}
+function ec_base_backup_migrate_restore_access() {
+	global $user;
+	return ($user->uid == 1) ? TRUE:FALSE;
+}
+function ec_base_backup_migrate_advanced_access() {
+	global $user;
+	return ($user->uid == 1) ? TRUE:FALSE;
+}
+
+function ec_base_admin_page() {
+	return t('Please select an item under the Administer menu on the top of the page.');
+}
+
+/**
+ * Implementation of hook_menu_link_alter().
+ */
+function ec_base_menu_link_alter(&$item, $menu) {
+  //drupal_set_message('menu:<pre>'.print_r($item).'</pre>' );
+  global $user;
+  switch($item['link_path']) {
+    case 'http://help.essential-connections.com':
+	  $item['weight'] = 9999;
+	  //$item['access callback'] = 'ec_base_help_access';
+	break;
+    case 'admin':
+	  $item['weight'] = 99;
+	break;
+    case 'node/add':
+	  $item['weight'] = 999;
+	break;
+    case 'group':
+	  $item['hidden'] = 1;
+	break;	
+    case 'og':
+	  $item['weight'] = 10;
+	  //$item['access callback'] = 'ec_base_auth_access';
+	break;
+    case 'content':
+	  $item['weight'] = 9;
+	  //$item['access callback'] = 'ec_base_auth_access';
+	break;
+    case 'users':
+	  $item['weight'] = 8;
+	  //$item['access callback'] = 'ec_base_auth_access';
+	break;
+    case 'tracker':
+	  $item['hidden'] = 1;
+	break;
+    case 'logout':
+	  $item['weight'] = -9999;
+	break;
+	case 'heartbeat/ogheartbeat':
+	case 'heartbeat/membersactivity':
+	case 'heartbeat/groupsactivity':
+	case 'heartbeat/privateheartbeat':
+	case 'heartbeat/publicheartbeat':
+	  $item['hidden'] = 1;
+	break;
+	case 'node/add/feed-item':
+	  $item['hidden'] = 1;
+	break;
+  }
+}
+
+/**
+ * Implementation of hook_form_alter().
+ */
+function ec_base_form_alter(&$form, $form_state, $form_id) {
+  //dpm($form);
+  $node = $form['#node'];
+  global $user;
+    //if($user->uid == 1){
+        //drupal_set_message('<pre>form - ' . print_r($form, TRUE) . '</pre>');
+    //}  
+	
+  // for all node edit forms
+  if($form_id == $node->type."_node_form"){
+
+    ////$form['body_field']['teaser_include']['#type'] = 'hidden';
+    ////$form['body_field']['#after_build'] = NULL;
+    ////$form['body_field']['teaser_js'] = NULL;
+    //$form['body_field']['teaser_include'] = NULL;
+    $form['body_field']['teaser_include']['#prefix'] = "<div style='position:fixed;bottom:-999999px;' >";
+    $form['body_field']['teaser_include']['#suffix'] = "</div>";
+		
+    $form['buttons']['#prefix'] = "<div style='position:fixed;bottom:0;left:100;background: #FFFFFF;background-position: 50 10;border: 1px solid #CCCCCC;' >";
+    $form['buttons']['#suffix'] = "</div>";
+  }
+
+  // OG
+  if($form_id == "group_node_form"){
+    //$form['og_private']['#type'] = 'hidden';
+    //$form['og_private']['#default_value'] = 0;
+    //$form['og_register']['#type'] = 'hidden';
+    //$form['og_register']['#default_value'] = 0;
+    //$form['og_directory']['#type'] = 'hidden';
+    //$form['og_directory']['#default_value'] = 1;
+    $form['og_directory']['#description'] = 'Should this group appear on the list of groups page? Disabled if the group is set to private group.';
+
+  }else if($form_id == 'og_confirm_unsubscribe' || $form_id == 'og_create_admin_confirm'){
+    if(is_numeric(arg(2)) && arg(0) == 'og'){
+      $form['actions']['cancel']['#value'] = l('Cancel','node/'.arg(2).'/members');
+    }
+  }
+
+  switch($form_id){
+    case 'menu_edit_item':
+      $form['menu']['link_path']['#description'] = 'The path this menu item links to. This can be an internal path such as <em>content/mypage</em> or an external URL such as <em>http://essential-connections.com</em>. Enter <em>&lt;front&gt;</em> to link to the front page.';
+      break;
+    case 'user_profile_form':
+	  $form['messaging']['og_notifications_autosubscribe']['#description'] = 'Checking this box allows you to automatically subscribe to all content in any group that you join.';
+	  break;
+	case 'user_import_add_form':
+	  $form['ftp']['#type'] = 'hidden';
+	  break;
+	case 'backup_migrate_ui_manual_quick_backup_form':
+	  unset($form['advanced']);
+	  $form['quickbackup']['destination_id']['#options'] = array('download' => 'Download');
+	  break;
+  }
+  
+
+}
+
+/**
+* Implementation of hook_link()
+*/
+function ec_base_link($type, $object, $teaser = FALSE) {
+  $links = array();
+  global $user;
+  if ($type == 'node' && (user_access('edit any '.$object->type.' content') || user_access('administer nodes'))) {
+    $links['edit'] = array(
+      'title' => '[edit '.$object->title.']',
+      'href' => 'node/' . $object->nid . '/edit',
+      'query' => '',
+      'fragment' => '',
+    );
+  }
+  return $links;
+}
+
+////
+
+function ec_base_site_settings_submit($form, &$form_state) {
+
+	// set variables
+	variable_set('site_name', $form_state['values']['site_name']);
+	variable_set('site_mail', $form_state['values']['site_mail']);
+	variable_set('site_slogan', $form_state['values']['site_slogan']);
+	variable_set('site_footer', $form_state['values']['site_footer']);
+	variable_set('site_frontpage', $form_state['values']['site_frontpage']);
+	drupal_set_message(t('The configuration options have been saved.'));
+	//drupal_goto($_GET['q'], drupal_get_destination());
+}
+
+function ec_base_site_settings() {
+	global $user;
+
+	// get variables
+	//global $conf;
+	//foreach ($conf['node_options_page'] as $k => $v) {
+	//	drupal_set_message('>'.$k.' : '.$v);
+	//}
+
+	// build form
+	$form['site_name'] = array(
+		'#type' => 'textfield',
+		'#title' => t('Site name'),
+		'#default_value' => variable_get('site_name', NULL),
+		//'#size' => 70,
+		'#maxlength' => 50,
+		'#description' => t('The name of this website.'),
+		'#required' => TRUE,
+	);
+        $form['site_mail'] = array(
+                '#type' => 'textfield',
+                '#title' => t('Site e-mail address'),
+                '#default_value' => variable_get('site_mail', NULL),
+                //'#size' => 70,
+                '#maxlength' => 50,
+                '#description' => t("The From address in automated e-mails sent during registration and new password requests, and other notifications. (Use an address ending in your site's domain to help prevent this e-mail being flagged as spam.)"),
+                '#required' => TRUE,
+        );
+	$form['site_slogan'] = array(
+		'#type' => 'textfield',
+		'#title' => t('Site slogan'),
+		'#default_value' => variable_get('site_slogan', NULL),
+		//'#size' => 70,
+		'#maxlength' => 50,
+		'#description' => t('Your site`s motto, tag line, or catchphrase (displayed under the site name).'),
+		//'#required' => TRUE,
+	);
+	$form['site_footer'] = array(
+		'#type' => 'textarea',
+		'#title' => t('Footer message'),
+		'#default_value' => variable_get('site_footer', NULL),
+		'#rows' => 5,
+		'#cols' => 90,
+		'#description' => t('This text will be displayed at the bottom of each page. Useful for adding a copyright notice to your pages.'),
+		//'#required' => TRUE,
+	);
+	
+	//date_timezone_site_form($form);
+	
+	$form['site_frontpage'] = array(
+		'#type' => 'radios',
+		'#title' => t('Site front page'),
+		'#options' => array('frontpage' => 'Show full posts','frontpage_teaser' => 'Show only teasers'),
+		'#default_value' => variable_get('site_frontpage', NULL),
+		//'#size' => 70,
+		'#description' => t('Select whether the front page shows full posts or teasers with a "read more" link'),
+		'#required' => TRUE,
+	);
+	
+	$form['submit'] = array('#type' => 'submit', '#value' => t('Save'));
+
+	return $form;
+}
+
+
+
+
+
+

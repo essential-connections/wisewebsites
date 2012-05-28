@@ -1,0 +1,6 @@
+core = "6.x"
+description = "ec_theme_garland"
+name = "ec_theme_garland"
+package = "Features"
+project = "ec_theme_garland"
+version = "6.x-1.0"

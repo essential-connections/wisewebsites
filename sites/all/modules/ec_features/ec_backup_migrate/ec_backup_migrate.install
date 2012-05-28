@@ -1,0 +1,15 @@
+<?php
+// $Id: ec_backup_migrate.install,v 1.0 2011/02/27 17:31:49 s Exp $
+
+
+function ec_backup_migrate_install() {
+	
+
+}
+
+function ec_backup_migrate_uninstall() {
+  
+  
+}
+
+

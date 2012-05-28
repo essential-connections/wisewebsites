@@ -1,0 +1,110 @@
+<?php
+
+
+function ec_ckeditor_post_install_install() {
+	
+  //global $base_url;
+  
+      //insert settings for default role
+      $arr = array();
+      $arr['allow_user_conf'] = "f";
+      $arr['min_rows'] = variable_get('ckeditor_minimum_rows', 1);
+      $arr['excl_mode'] = variable_get('ckeditor_exclude_toggle', 0);
+      $arr['filebrowser'] = 'none';
+      $arr['quickupload'] = 'f';
+      $arr['excl']='';
+      $arr['simple_incl']='';
+
+      //security
+      $arr['ss'] = "2";
+      $arr['filters']['htmlpurifier/0'] = 0;
+	  $arr['filters']['htmlpurifier/1'] = 0;
+	  $arr['filters']['filter/3'] = 1;
+	  $arr['filters']['filter/0'] = 1;
+	  $arr['filters']['messaging/1'] = 0;
+	  $arr['filters']['messaging/0'] = 0;
+	  $arr['filters']['swftools/0 '] = 0;
+
+      //appearance
+      $arr['default'] = "t";
+      $arr['show_toggle'] = "t";
+      $arr['popup'] = variable_get('ckeditor_popup', 0) ? "t" : "f";
+      $arr['skin'] = "kama";
+      $arr['toolbar'] = 'DrupalBasic';
+      $arr['expand'] = variable_get('ckeditor_toolbar_start_expanded', 1) ? "t" : "f";
+      $arr['width'] = variable_get("ckeditor_width", "100%");
+      $arr['lang'] = "en";
+      $arr['auto_lang'] = "t";
+      $arr['language_direction'] = "default";
+      
+      //output
+      $arr['enter_mode'] = "br";
+      $arr['shift_enter_mode'] = "p";
+      $arr['font_format'] = 'p;div;pre;address;h1;h2;h3;h4;h5;h6';
+      $arr['format_source'] = "t";
+      $arr['format_output'] = "t";
+      $arr['custom_formatting'] = "t";
+      $arr['formatting']['custom_formatting_options'] = array();
+
+      //css
+      $arr['css_mode'] = "theme";
+      $arr['css_path'] = variable_get("ckeditor_stylesheet", "");
+
+      //upload
+      //get permissions here like in _update_role_permissions
+      $arr['filebrowser'] = "none";
+      $arr['user_choose'] = "f";
+      $arr['show_fieldnamehint'] = "t";
+      $arr['ckeditor_load_method'] = "ckeditor.js";
+      $arr['ckeditor_load_time_out'] = 0;
+      $arr['scayt_autoStartup'] = "f";
+
+      $result = db_query("REPLACE INTO {ckeditor_settings} (name, settings) VALUES ('%s', '%s')", "Default", serialize($arr));
+	if($result != 1) watchdog('ec_ckeditor_post_install', 'problem replacing ckeditor_settings Default in hook_install', array(), WATCHDOG_ERROR,NULL);
+      //insert settings for advanced role
+	  $arr['filters']['filter/0'] = 0;
+      $arr['toolbar'] = 'DrupalFull';
+	  $arr['filebrowser'] = "imce";
+      $result = db_query("REPLACE INTO {ckeditor_settings} (name, settings) VALUES ('%s', '%s')", "Advanced", serialize($arr));
+	if($result != 1) watchdog('ec_ckeditor_post_install', 'problem replacing ckeditor_settings Advanced in hook_install', array(), WATCHDOG_ERROR,NULL);
+
+      $arr = array();
+
+      $arr['excl_mode'] = 1;
+      $arr['excl'] = 
+      "admin/build/block/add.edit-body\n".
+      "admin/build/block/configure/block/*.edit-body\n".
+      "*@node/*/edit.edit-body\n".
+      "*@node/add/*.edit-body\n";
+
+      //force by default simple toolbar on selected textareas
+      $arr['simple_incl_mode'] = 1;
+      $arr['simple_incl'] =
+      "*.edit-signature\n".
+      "admin/settings/site-information.*\n".
+      "admin/settings/site-maintenance.*\n".
+      "*.edit-page-help\n".
+      "*.edit-user-registration-help\n".
+      "*.edit-user-picture-guidelines\n";
+
+      $arr['ckeditor_path'] = "%m/ckeditor";
+      
+      $result = db_query("REPLACE INTO {ckeditor_settings} (name, settings) VALUES ('%s', '%s')", "CKEditor Global Profile", serialize($arr));
+	if($result != 1) watchdog('ec_ckeditor_post_install', 'problem replacing ckeditor_settings CKEditor Global Profile in hook_install', array(), WATCHDOG_ERROR,NULL);
+  
+  module_load_include('inc', 'ckeditor', 'includes/ckeditor.admin');
+  ckeditor_rebuild_selectors();
+	
+  /*
+  $result = db_query("REPLACE INTO {ckeditor_role} (name, rid) VALUES ('Advanced1', 2),('Default1', 1)");
+  if($result != 1) watchdog('ec_ckeditor_post_install', 'problem replacing ckeditor_role in hook_install', array(), WATCHDOG_ERROR, NULL);
+  */
+
+}
+
+function ec_ckeditor_post_install_uninstall() {
+  
+  
+}
+
+

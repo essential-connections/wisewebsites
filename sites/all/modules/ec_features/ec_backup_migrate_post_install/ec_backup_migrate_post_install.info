@@ -1,0 +1,8 @@
+core = "6.x"
+dependencies[] = "backup_migrate"
+description = "a hook_install after backup_migrate is installed"
+name = "backup_migrate_post_install"
+package = "Features"
+project = "ec_backup_migrate_post_install"
+version = "6.x-1.0"
+

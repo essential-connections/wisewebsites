@@ -1,0 +1,11 @@
+core = "6.x"
+dependencies[] = "strongarm"
+description = "ec_admin_access"
+features[ctools][] = "strongarm:strongarm:1"
+features[variable][] = "ec_denied_admin_paths"
+name = "ec_admin_access"
+package = "Features"
+project = "ec_admin_access"
+version = "6.x-1.0"
+
+

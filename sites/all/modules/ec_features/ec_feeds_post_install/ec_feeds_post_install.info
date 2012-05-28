@@ -1,0 +1,8 @@
+core = "6.x"
+description = "a hook_install after feeds is installed"
+name = "ec_feeds_post_install"
+package = "Features"
+project = "ec_feeds_post_install"
+version = "6.x-1.0"
+
+

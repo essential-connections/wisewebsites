@@ -1,0 +1,9 @@
+core = "6.x"
+dependencies[] = "imagecache"
+description = "a hook_install after imagecache is installed"
+name = "imagecache_post_install"
+package = "Features"
+project = "ec_imagecache_post_install"
+version = "6.x-1.0"
+
+

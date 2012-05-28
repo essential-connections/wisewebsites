@@ -1,0 +1,35 @@
+<?php
+
+include_once('ec_content.features.inc');
+
+function ec_content_preprocess_node(&$variables) {
+  //if(arg(0) == 'node' && arg(1) > 0 && !arg(2)){
+    if($variables['node']->field_show_auth_info['0']['value'] == 1){
+      $variables['submitted'] = FALSE;
+    }
+  //}
+}
+
+function ec_content_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
+
+  switch ($op) {
+    case 'insert':
+
+	break;
+    case 'presave':
+
+    break;
+    case 'view':
+
+      if($node->field_image && $node->field_image[0]['fid']){
+	    $node->content['ddblock'] = array(
+			'#value' => views_embed_view('node_gallery','page_2',array($node->nid)),
+			'#weight' => $node->content['group_images']['#weight'],
+	    );
+	  }
+
+      break;
+   }
+
+}
+

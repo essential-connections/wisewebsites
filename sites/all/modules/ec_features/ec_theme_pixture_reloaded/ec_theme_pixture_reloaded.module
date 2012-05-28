@@ -1,0 +1,29 @@
+<?php
+
+include_once('ec_theme_pixture_reloaded.features.inc');
+
+function ec_theme_pixture_reloaded_form_alter(&$form, $form_state, $form_id) {
+
+  switch($form_id){
+    case 'system_themes_form':
+
+        //$form['pixture_reloaded']['info']['#value']['description'] = '';
+        //$form['pixture_reloaded']['info']['#value']['version'] = '';
+		
+		unset($form['adaptivetheme']);
+		unset($form['adaptivetheme_admin']);
+		unset($form['adaptivetheme_subtheme']);
+		
+        unset($form['status']['#options']['adaptivetheme']);
+		unset($form['status']['#options']['adaptivetheme_admin']);
+		unset($form['status']['#options']['adaptivetheme_subtheme']);
+		
+        unset($form['theme_default']['#options']['adaptivetheme']);
+		unset($form['theme_default']['#options']['adaptivetheme_admin']);
+		unset($form['theme_default']['#options']['adaptivetheme_subtheme']);
+      
+      break;
+
+  }
+
+}

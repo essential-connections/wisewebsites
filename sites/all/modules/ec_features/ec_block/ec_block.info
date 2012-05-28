@@ -1,0 +1,10 @@
+core = "6.x"
+dependencies[] = "features"
+description = "block"
+features[user_permission][] = "administer blocks"
+features[user_permission][] = "use PHP for block visibility"
+name = "block"
+package = "Features"
+project = "ec_block"
+version = "6.x-1.0"
+

@@ -1,0 +1,342 @@
+<?php
+
+include_once('ec_og.features.inc');
+
+/**
+ * Preprocess function for the page theme hook.
+ *
+ */
+function ec_og_preprocess_page(&$variables) {
+    if(arg(0) == 'og' && arg(1) == 'users' && arg(2)){
+       drupal_goto('node/'.arg(2).'/members');
+    }
+}
+
+/**
+ * Implementation of hook_perm().
+ */
+function ec_og_perm() {
+  return array('manage groups','broadcast');
+}
+
+/**
+ * Implementation of hook_menu().
+ */
+function ec_og_menu() {
+  $items = array();
+
+    global $user;
+
+     $items['node/%node/add_members'] = array(
+       'title' => 'Add Members',
+       'page callback' => 'views_embed_view',
+       'page arguments' => array('add_member','page'),
+       'access callback' => 'ec_og_is_group',
+       'access arguments' => array(1),
+       'type' => MENU_LOCAL_TASK,
+       'weight' => 6
+     );
+     $items['node/%node/add_members/add/%user'] = array(
+       'title' => 'Add Members',
+       'page callback' => 'drupal_get_form',
+       'page arguments' => array('ec_og_add_member'),
+       'access callback' => 'user_access',
+       'access arguments' => array('manage groups'),
+       'type' => MENU_CALLBACK,
+       'weight' => 1
+    );
+    $items['node/%node/manage_members/add/%user'] = array(
+       'title' => 'Add Member',
+       'page callback' => 'ec_og_add_member1',
+       'page arguments' => array(1,4,'1'),
+       'access callback' => 'user_access',
+       'access arguments' => array('manage groups'),
+       'type' => MENU_CALLBACK,
+       'weight' => 1
+    );
+    $items['node/%node/manage_members/queue/%user'] = array(
+       'title' => 'Add Member',
+       'page callback' => 'ec_og_add_member1',
+       'page arguments' => array(1,4,'0'),
+       'access callback' => 'user_access',
+       'access arguments' => array('manage groups'),
+       'type' => MENU_CALLBACK,
+       'weight' => 1
+    );
+    $items['node/%node/manage_members/remove/%user'] = array(
+       'title' => 'Unapprove Member',
+       'page callback' => 'ec_og_remove_member',
+       'page arguments' => array(1,4),
+       'access callback' => 'user_access',
+       'access arguments' => array('manage groups'),
+       'type' => MENU_CALLBACK,
+       'weight' => 1
+    );
+
+
+  // OG overrides ///////////////////////////
+
+  $items['og/users/%node/faces'] = array(
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'page callback' => 'ec_og_goto_members',
+    'page arguments' => array(2),
+    'access callback' => 'node_access',
+    'access arguments' => array('view', 2),
+    'title' => '_'
+  );
+
+    // Broadcast tab on group node.
+  $items['node/%node/broadcast'] = array(
+    'title' => 'Broadcast',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ec_og_broadcast_form', 1),
+    'access callback' => 'ec_og_broadcast_access',
+    'access arguments' => array(1),
+    //'access callback' => 'user_access',
+    //'access arguments' => array('broadcast'),
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 7
+  );
+
+
+
+  ////////////////////////////////////
+
+  return $items;
+}
+
+function ec_og_goto_members($node){
+	//drupal_set_message(">>>".$node->nid );
+  if($node->nid > 0){
+    drupal_goto('node/'.$node->nid.'/members');
+  }
+}
+function ec_og_is_group($node){
+  if(user_access('manage groups') && og_is_group_type($node->type)){
+    return TRUE;
+  }else{
+    return FALSE;
+  }
+}
+
+/**
+* Implementation of hook_mail()
+*/
+function ec_og_mail($key, &$message, $params) {
+  $message['subject'] = $params['subject'];
+  $message['body'] = $params['body'];
+}
+
+/**
+* Implementation of hook_mail_alter()
+*/
+function ec_og_mail_alter(&$message) {
+  global $user;
+  if(arg(2) == 'broadcast'){
+    $message['headers']['Errors-To'] = $user->mail;
+    $message['headers']['Return-Path'] = $user->mail;
+    $message['headers']['Sender'] = $user->mail;
+    $message['headers']['Reply-To'] = $user->mail;
+    $message['headers']['From'] = $user->mail;
+  }
+}
+
+/**
+ * Admins may broadcast messages to all their members.
+ *
+ * @ingroup forms
+ * @param $node
+ *   The group node.
+ */
+function ec_og_broadcast_access($node) {
+  $ret = FALSE;
+  if(og_is_group_type($node->type) && module_exists('og_notifications')){
+    if(og_is_group_admin($node)){
+      $ret = TRUE;
+    }else if(user_access('broadcast') && og_is_group_member($node)){
+      $ret = TRUE;
+    }
+  }
+  return $ret;
+}
+function ec_og_broadcast_form($form_state, $node) {
+   drupal_set_title(t('Send message to %group', array('%group' => $node->title)));
+
+  $sql = "SELECT u.uid, u.name, u.mail, u.picture, r.name AS role, ur.rid
+  FROM {og_uid} ou
+  INNER JOIN {users} u ON ou.uid = u.uid
+  INNER JOIN {users_roles} ur ON u.uid = ur.uid
+  INNER JOIN {role} r ON ur.rid = r.rid
+  WHERE ou.nid = %d
+  AND u.status > 0
+  AND ou.is_active >= 1
+  ORDER BY r.name ASC
+  ";
+  $result = db_query($sql, $node->nid);
+  $options = array();
+  $users = array();
+  $user_roles = array();
+  while ($row = db_fetch_object($result)) {
+    //drupal_set_message(">".$row->rid.' : '.$row->role);
+    $users[$row->uid][$row->rid] = $row->uid;
+    $user_roles[$row->rid][$row->uid] = $row->uid;
+    $options[$row->rid] = $row->role.'('.count($user_roles[$row->rid]).')';
+  }
+
+  ////
+
+  $form['subject'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Subject'),
+    '#size' => 70,
+    '#maxlength' => 250,
+    '#description' => t('Enter a subject for your message.'),
+    '#required' => TRUE,
+  );
+  $form['body'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Body'),
+    '#rows' => 5,
+    '#cols' => 90,
+    '#description' => t('Enter a body for your message.'),
+    '#required' => TRUE
+  );
+  $form['roles'] = array(
+    '#type' => 'checkboxes',
+    '#title' => t('Roles to send to'),
+    //'#size' => 70,
+    //'#description' => t('Check all roles to send your message to.'),
+    '#required' => TRUE,
+    '#options' => $options,
+  );
+  $form['send'] = array('#type' => 'submit', '#value' => t('Send message'));
+  $form['gid'] = array('#type' => 'value', '#value' => $node->nid);
+  $form['users'] = array('#type' => 'value', '#value' => $users);
+  return $form;
+}
+
+function ec_og_broadcast_form_submit($form, &$form_state) {
+  global $user;
+
+  $roles = array();
+  foreach ($form_state['values']['roles'] as $id => $rid) {
+    //drupal_set_message("> ".$id." >> ".$rid);
+    if($rid > 0) $roles[$rid] = $rid;
+  }
+
+  $recipients = array();
+  foreach ($form_state['values']['users'] as $uid => $user_roles) {
+    //drupal_set_message("> ".$uid." >> ".$user_roles);
+    //foreach ($role as $rid => $id) {
+      //drupal_set_message("- ".$rid." -- ".$id);
+      if( array_intersect_key($roles, $user_roles) ){
+        //drupal_set_message(">".$account->name);
+        $recipients[] = $uid;
+      }
+    //}
+  }
+
+  $node = node_load($form_state['values']['gid']);
+  $variables = array(
+    '@group' => $node->title,
+    '@subject' => $form_state['values']['subject'],
+    '@body' => $form_state['values']['body'],
+    '@site' => variable_get('site_name', 'drupal'),
+    '!url_group' => url("node/$node->nid", array('absolute' => TRUE)),
+    '!url_unsubscribe' => url("og/unsubscribe/$node->nid/$user->uid", array('absolute' => TRUE))
+  );
+
+  $message = array(
+    'from' => $user,
+    'subject' => $form_state['values']['subject'],
+    'body' => _og_mail_text('og_admin_email_body', $variables)
+  );
+
+  // Send notifications to each member; Sending an array of recipients implies
+  // that this is a bulk message.
+  module_invoke_all('og', 'user broadcast', $node->nid, $recipients, $message);
+  drupal_set_message(format_plural(count($recipients), '1 message sent.', '@count messages sent.'));
+
+}
+
+/////////////////////////////
+
+function ec_og_add_member_submit($form, &$form_state) {
+
+  $nid = $form_state['values']['nid'];
+  $uid = $form_state['values']['uid'];
+  //drupal_set_message("nid::: ".$nid." uid:::".$uid);
+  og_save_subscription($nid, $uid, array('is_active' => 1, 'is_admin' => 0));
+
+  drupal_set_message(t('The member has been added.'));
+
+  drupal_goto("node/".$nid."/add_members");
+}
+function ec_og_add_member() {
+  //drupal_set_message("parent_uid::: ".arg(1));
+
+  $group = node_load(arg(1));
+  $account = user_load(arg(4));
+  $nid = $group->nid;
+  $uid = $account->uid;//arg(4);
+  //$group = $node;//node_load($nid);
+  //$account = user_load($uid);
+  //drupal_set_message("test::: ".arg(1));
+  $form['nid'] = array('#type' => 'hidden','#value' => $nid);
+  $form['uid'] = array('#type' => 'hidden','#value' => $uid);
+
+  $form['text'] = array('#value' => "<div>".t("Are you sure you want to add ".$account->name." as a member of ".$group->title."?")."</div>");
+  $form['submit'] = array('#type' => 'submit', '#value' => t('Add Member'));
+  $form['cancel'] = array('#value' => l('Cancel','node/'.$nid.'/add_members'));
+
+  return $form;
+}
+function ec_og_add_member1($group,$account,$active=0) {
+  $nid = $group->nid;
+  $uid = $account->uid;
+  //drupal_set_message("nid::: ".$nid." uid:::".$uid);
+
+  // get og_uid created and pass through og_save_subscription or it will be reset
+  $sql = "SELECT created FROM {og_uid} WHERE nid = %d AND uid = %d";
+  $result = db_query($sql, $nid, $uid);
+  $obj = db_fetch_object($result);
+  og_save_subscription($nid, $uid, array('is_active' => $active, 'is_admin' => 0, 'created' => $obj->created));
+
+  if($active == 1){
+    if($obj->created){
+      drupal_set_message(t(l($account->name,'user/'.$account->uid).' has been approved for '.l($group->title,'node/'.$group->nid)));
+
+      $variables = array(
+        '@title' => $group->title,
+        '!group_url'=> url("node/$group->nid", array('absolute' => TRUE))
+      );
+      $message = array(
+        'subject' => _og_mail_text('og_approve_user_subject', $variables),
+        'body' => _og_mail_text('og_approve_user_body', $variables)
+      );
+      module_invoke_all('og', 'user approve', $nid, $uid, $message);
+
+    }else{
+
+      drupal_set_message(t(l($account->name,'user/'.$account->uid).' has been added to '.l($group->title,'node/'.$group->nid)));
+    }
+  }else{
+    drupal_set_message(t(l($account->name,'user/'.$account->uid).' has been added to the waiting list for '.l($group->title,'node/'.$group->nid)));
+  }
+
+
+  drupal_goto($_SERVER['HTTP_REFERER']);
+}
+function ec_og_remove_member($group,$account) {
+  $nid = $group->nid;
+  $uid = $account->uid;
+  //drupal_set_message("nid::: ".$nid." uid:::".$uid);
+
+  og_delete_subscription($nid, $uid);
+  drupal_set_message(t(l($account->name,'user/'.$account->uid).' has been removed from '.l($group->title,'node/'.$group->nid)));
+
+  //drupal_goto("node/".$nid."/manage_members");
+  drupal_goto($_SERVER['HTTP_REFERER']);
+}
+
+

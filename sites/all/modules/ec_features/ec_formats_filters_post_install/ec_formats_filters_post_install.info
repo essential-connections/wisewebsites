@@ -1,0 +1,8 @@
+core = "6.x"
+dependencies[] = "better_formats"
+description = "a hook_install after ec_formats_filters is installed"
+name = "formats_filters_post_install"
+package = "Features"
+project = "ec_formats_filters_post_install"
+version = "6.x-1.0"
+

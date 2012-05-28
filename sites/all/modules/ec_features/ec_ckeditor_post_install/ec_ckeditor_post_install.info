@@ -1,0 +1,8 @@
+core = "6.x"
+dependencies[] = "ckeditor"
+description = "a hook_install after ckeditor is installed"
+name = "ckeditor_post_install"
+package = "Features"
+project = "ec_ckeditor_post_install"
+version = "6.x-1.0"
+
