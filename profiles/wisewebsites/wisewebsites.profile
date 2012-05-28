@@ -1,5 +1,5 @@
 <?php
-// $Id: essential-connections.profile,v 1.0 2010/03/04 05:13:44 Exp $
+// $Id: wisewebsites.profile,v 1.0 2010/03/04 05:13:44 Exp $
 
 /**
  * Return an array of the modules to be enabled when this profile is installed.
@@ -7,11 +7,11 @@
  * @return
  *   An array of modules to enable.
 */
-function essential_connections_profile_modules() {
+function wisewebsites_profile_modules() {
   $modules = array( 
     'ctools','features','strongarm',
   ); 
-  return _essential_connections_modules();//$modules;
+  return _wisewebsites_modules();//$modules;
 } 
 
 /**
@@ -22,13 +22,13 @@ function essential_connections_profile_modules() {
  *   and optional 'language' to override the language selection for
  *   language-specific profiles.
  */
-function essential_connections_profile_details() {
+function wisewebsites_profile_details() {
   return array(
     'name' => 'essential-connections site',
     'description' => 'essential-connections profile',
   );
 }
-function _essential_connections_modules() {
+function _wisewebsites_modules() {
   return array(
 	'ctools','features','strongarm',
   'views','views_access_php',
@@ -94,7 +94,7 @@ function _essential_connections_modules() {
  *   while the values will be displayed to the user in the installer
  *   task list.
  */
-function essential_connections_profile_task_list() {
+function wisewebsites_profile_task_list() {
   return array(
     'ec-modules-batch' => 'Install modules',
 	'ec-configure-batch' => 'Configure',
@@ -103,7 +103,7 @@ function essential_connections_profile_task_list() {
 /**
  * Implementation of hook_profile_tasks().
  */
-function essential_connections_profile_tasks(&$task, $url) {
+function wisewebsites_profile_tasks(&$task, $url) {
   
   // first run is 'profile'
   if($task == 'profile'){
@@ -118,13 +118,13 @@ function essential_connections_profile_tasks(&$task, $url) {
 	$task = 'ec-modules';	
   }
   if ($task == 'ec-modules') {
-    $modules = _essential_connections_modules();
+    $modules = _wisewebsites_modules();
     $files = module_rebuild_cache();
     // Create batch
     foreach ($modules as $module) {
       $batch['operations'][] = array('_install_module_batch', array($module, $files[$module]->info['name']));
     }    
-    $batch['finished'] = '_essential_connections_module_batch_finished';
+    $batch['finished'] = '_wisewebsites_module_batch_finished';
     $batch['title'] = st('Installing @drupal', array('@drupal' => drupal_install_profile_name()));
     $batch['error_message'] = st('The installation has encountered an error.');
 
@@ -138,8 +138,8 @@ function essential_connections_profile_tasks(&$task, $url) {
   }
   if($task == 'ec-configure'){
     $batch['title'] = st('Configuring @drupal', array('@drupal' => drupal_install_profile_name()));
-    $batch['operations'][] = array('_essential_connections_configure', array());
-    $batch['finished'] = '_essential_connections_install_finished';
+    $batch['operations'][] = array('_wisewebsites_configure', array());
+    $batch['finished'] = '_wisewebsites_install_finished';
     variable_set('install_task', 'ec-configure-batch');
     batch_set($batch);
     batch_process($url, $url);
@@ -153,7 +153,7 @@ function essential_connections_profile_tasks(&$task, $url) {
   }
 
 }
-function _essential_connections_configure() {
+function _wisewebsites_configure() {
 	
 
     //variable_set('site_frontpage', 'user/login');
@@ -315,10 +315,10 @@ function _essential_connections_configure() {
  * Finished callback for the modules install batch.
  *
  */
-function _essential_connections_module_batch_finished($success, $results) {
+function _wisewebsites_module_batch_finished($success, $results) {
   variable_set('install_task', 'ec-configure');
 }
-function _essential_connections_install_finished() {
+function _wisewebsites_install_finished() {
   //drupal_flush_all_caches();
   //drupal_cron_run();
   variable_set('install_task', 'profile-finished');
