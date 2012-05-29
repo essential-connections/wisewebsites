@@ -15,6 +15,16 @@ function ec_uc_strongarm() {
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'node_options_product';
+  $strongarm->value = array(
+    0 => 'status',
+    1 => 'revision',
+  );
+
+  $export['node_options_product'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'uc_address_format_124';
   $strongarm->value = '!company
 !first_name !last_name
@@ -36,20 +46,6 @@ function ec_uc_strongarm() {
 !country_name_if';
 
   $export['uc_address_format_840'] = $strongarm;
-  $strongarm = new stdClass;
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'uc_catalog_name';
-  $strongarm->value = 'Catalog';
-
-  $export['uc_catalog_name'] = $strongarm;
-  $strongarm = new stdClass;
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'uc_catalog_vid';
-  $strongarm->value = '3';
-
-  $export['uc_catalog_vid'] = $strongarm;
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
