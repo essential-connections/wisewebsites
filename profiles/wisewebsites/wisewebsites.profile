@@ -1,5 +1,4 @@
 <?php
-// $Id: wisewebsites.profile,v 1.0 2010/03/04 05:13:44 Exp $
 
 /**
  * Return an array of the modules to be enabled when this profile is installed.
@@ -24,8 +23,8 @@ function wisewebsites_profile_modules() {
  */
 function wisewebsites_profile_details() {
   return array(
-    'name' => 'essential-connections site',
-    'description' => 'essential-connections profile',
+    'name' => 'wise website',
+    'description' => 'wisewebsites profile',
   );
 }
 function _wisewebsites_modules() {
