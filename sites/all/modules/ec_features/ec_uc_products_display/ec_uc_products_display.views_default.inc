@@ -338,7 +338,7 @@ function ec_uc_products_display_views_default_views() {
     'type' => 'perm',
     'perm' => 'Allow Reordering',
   ));
-  $handler->override_option('header', '<a href="/products/order" >reorder</a>');
+  $handler->override_option('header', '<a href="/products/order" >arrange list</a>');
   $handler->override_option('header_format', '2');
   $handler->override_option('header_empty', 1);
   $handler->override_option('empty', '');
@@ -804,7 +804,7 @@ function ec_uc_products_display_views_default_views() {
     'type' => 'perm',
     'perm' => 'Allow Reordering',
   ));
-  $handler->override_option('header', '<a href="taxonomy/order" >reorder</a>');
+  $handler->override_option('header', '<a href="taxonomy/order" >arrange list</a>');
   $handler->override_option('header_format', '2');
   $handler->override_option('header_empty', 1);
   $handler->override_option('attachment_position', 'both');
