@@ -24,6 +24,7 @@ function wisewebsites_profile_modules() {
 function wisewebsites_profile_details() {
   return array(
     'name' => 'wise website',
+    'old_short_name' => 'essential_connections',
     'description' => 'wisewebsites profile',
   );
 }
