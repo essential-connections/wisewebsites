@@ -1,0 +1,6 @@
+name = DraggableViews Ubercart handler
+description = Provides ubercart support for order fields.
+dependencies[] = draggableviews
+dependencies[] = uc_views
+package = Views
+core = 6.x

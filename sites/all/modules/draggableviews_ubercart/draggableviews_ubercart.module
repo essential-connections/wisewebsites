@@ -1,0 +1,37 @@
+<?php
+
+/**
+ * @file
+ * DraggableViews ubercart module provides ubercart support for both order fields and parent fields.
+ */
+
+/**
+ * Display help and module information
+ * @param path which path of the site we're displaying help
+ * @param arg array that holds the current path as would be returned from arg() function
+ * @return help text for the path
+ */
+function draggableviews_ubercart_help($path, $arg) {
+  $output = '';
+  switch ($path) {
+    case "admin/help#draggableviews_ubercart":
+      $output  = '<p>'. t("Ubercart support for both order fields and parent fields.") .'</p>';
+      $output .= '<p>'. t("Hint: Use Views relations to turn the Ubercart Product: List position field into a parent field.") .'</p>';
+      break;
+  }
+  return $output;
+}
+
+/**
+ * Implementing hook_draggableviews_handlers
+ */
+function draggableviews_ubercart_draggableviews_handlers() {
+  return array(
+    'ubercart' => array(
+      'file' => 'draggableviews_handler_ubercart.inc',
+      'title' => t('Ubercart'),
+      'description' => 'Ubercart List Position handler.',
+      'handler' => 'draggableviews_handler_ubercart',
+    ),
+  );
+}
