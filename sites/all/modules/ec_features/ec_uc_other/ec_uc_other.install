@@ -4,7 +4,7 @@
 function ec_uc_other_install() {
 	
   //global $base_url;
-  
+/*
   $result = db_query("REPLACE INTO {vocabulary} (vid, name, description, help, relations, hierarchy, multiple, required, tags, module, weight) VALUES
 (4, 'Catalog Category', '', 'Enter a comma separated list of key words to categorize this product. Only products with categories are shown on the catalog pages.', 1, 0, 0, 0, 1, 'taxonomy', 0);");
   if($result != 1) watchdog('ec_uc_other', 'problem replacing {vocabulary} in hook_install', array(), WATCHDOG_ERROR,NULL);
@@ -12,7 +12,7 @@ function ec_uc_other_install() {
   $result = db_query("REPLACE INTO {vocabulary_node_types} (vid, type) VALUES
 (4, 'product');");
   if($result != 1) watchdog('ec_uc_products_display', 'problem replacing {vocabulary_node_types} in hook_install', array(), WATCHDOG_ERROR, NULL);
-  
+*/
 
 }
 
