@@ -22,6 +22,15 @@ function ec_uc_user_default_permissions() {
     ),
   );
 
+  // Exported permission: administer catalog
+  $permissions['administer catalog'] = array(
+    'name' => 'administer catalog',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'manager',
+    ),
+  );
+
   // Exported permission: administer order workflow
   $permissions['administer order workflow'] = array(
     'name' => 'administer order workflow',

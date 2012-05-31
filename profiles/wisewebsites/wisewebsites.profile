@@ -72,7 +72,7 @@ function _wisewebsites_modules() {
 	'ec_theme_pixture_reloaded',
 	'ec_theme_zeropoint',
 	'ec_uc',
-  'ec_uc_products_display',
+  'ec_uc_other',
 	'ec_frontpage',
 	'ec_seo',
 	'ec_scheduler',

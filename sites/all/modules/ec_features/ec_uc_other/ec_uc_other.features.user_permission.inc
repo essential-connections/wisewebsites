@@ -3,7 +3,7 @@
 /**
  * Implementation of hook_user_default_permissions().
  */
-function ec_uc_products_display_user_default_permissions() {
+function ec_uc_other_user_default_permissions() {
   $permissions = array();
 
   // Exported permission: Allow Reordering
@@ -11,6 +11,7 @@ function ec_uc_products_display_user_default_permissions() {
     'name' => 'Allow Reordering',
     'roles' => array(
       '0' => 'administrator',
+      '1' => 'manager',
     ),
   );
 
