@@ -156,13 +156,13 @@ function ec_uc_other_views_default_views() {
 		  'operator' => 'or',
 		  'value' => array(),
 		  'group' => '0',
-		  'exposed' => FALSE,
+		  'exposed' => TRUE,
 		  'expose' => array(
-		    'operator' => 'tid_op',
-		    'label' => 'Catalog Category',
 		    'use_operator' => 0,
+		    'operator' => 'tid_op',
 		    'identifier' => 'tid',
-		    'optional' => 1,
+		    'label' => 'Catalog Category',
+		    'optional' => 0,
 		    'single' => 1,
 		    'remember' => 0,
 		    'reduce' => 0,
@@ -185,12 +185,17 @@ function ec_uc_other_views_default_views() {
 	));
 	$handler->override_option('access', array(
 		'type' => 'perm',
-		'perm' => 'edit all products',
+		'perm' => 'administer catalog',
 	));
 	$handler->override_option('cache', array(
 		'type' => 'none',
 	));
 	$handler->override_option('title', 'Product List Position');
+	$handler->override_option('header', '<em>Hint: If you change the list position of a product that is in multiple categories it will be changed for all categories it is in.</em>');
+	$handler->override_option('header_format', '2');
+	$handler->override_option('header_empty', 1);
+	$handler->override_option('empty', 'There are no products in this category');
+	$handler->override_option('empty_format', '2');
 	$handler->override_option('items_per_page', 25);
 	$handler->override_option('use_pager', '1');
 	$handler->override_option('style_plugin', 'draggabletable');
@@ -202,8 +207,7 @@ function ec_uc_other_views_default_views() {
 		'columns' => array(
 		  'title' => 'title',
 		  'sell_price' => 'sell_price',
-		  'buyitnowbutton' => 'buyitnowbutton',
-		  'field_image_cache_fid' => 'field_image_cache_fid',
+		  'tid' => 'tid',
 		  'ordering' => 'ordering',
 		),
 		'info' => array(
@@ -215,10 +219,7 @@ function ec_uc_other_views_default_views() {
 		    'sortable' => 0,
 		    'separator' => '',
 		  ),
-		  'buyitnowbutton' => array(
-		    'separator' => '',
-		  ),
-		  'field_image_cache_fid' => array(
+		  'tid' => array(
 		    'separator' => '',
 		  ),
 		  'ordering' => array(
@@ -242,7 +243,7 @@ function ec_uc_other_views_default_views() {
 		),
 		'draggableviews_depth_limit' => '-1',
 		'draggableviews_repair' => array(
-		  'repair' => 'repair',
+		  'repair' => 0,
 		),
 		'tabledrag_types_add' => 'Add type',
 		'tabledrag_expand' => array(
