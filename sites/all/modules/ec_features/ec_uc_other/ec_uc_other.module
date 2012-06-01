@@ -1,3 +1,29 @@
 <?php
 
 include_once('ec_uc_other.features.inc');
+
+
+/**
+ * Implementation of hook_menu().
+ */
+function ec_uc_other_menu() {
+  $items = array();
+
+  
+  // this is here because the menu item from the view was not in the right place on install
+    $items['admin/store/products/listposition'] = array(
+       'title' => 'Product List Position',
+       'description' => '',
+       'page callback' => 'views_embed_view',
+			 'page arguments' => array('uc_draggableviews', 'page_1'),
+       'access callback' => 'user_access',
+       'access arguments' => array('administer catalog'),
+       'type' => MENU_NORMAL_ITEM,
+       'weight' => -1
+    );
+
+  return $items;
+}
+
+
+
