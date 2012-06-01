@@ -7,10 +7,10 @@ function ec_uc_other_menu_default_menu_links() {
   $menu_links = array();
 
   // Exported menu link: navigation:admin/store/products/ordering
-  $menu_links['navigation:admin/store/products/ordering'] = array(
+  $menu_links['navigation:admin/store/products/listposition'] = array(
     'menu_name' => 'navigation',
-    'link_path' => 'admin/store/products/ordering',
-    'router_path' => 'admin/store/products/ordering',
+    'link_path' => 'admin/store/products/listposition',
+    'router_path' => 'admin/store/products/listposition',
     'link_title' => 'Product List Position',
     'options' => array(),
     'module' => 'system',
