@@ -298,7 +298,7 @@ function _wisewebsites_configure() {
 	'ec_theme_pixture_reloaded' => array('variable'),
 	'ec_theme_zeropoint' => array('variable'),
 	'ec_uc' => array('user_permission','variable','menu_links'),
-  'ec_uc_other' => array('menu_links'),
+  'ec_uc_other' => array('views'),
 	'ec_frontpage' => array('menu_links'),
 	'ec_seo' => array('user_permission'),
 	'ec_scheduler' => array('user_permission','variable'),
