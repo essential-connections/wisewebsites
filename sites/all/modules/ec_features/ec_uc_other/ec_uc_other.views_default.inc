@@ -122,6 +122,17 @@ function ec_uc_other_views_default_views() {
 		  'field' => 'ordering',
 		  'relationship' => 'none',
 		),
+		'changed' => array(
+		  'order' => 'DESC',
+		  'granularity' => 'second',
+		  'id' => 'changed',
+		  'table' => 'node',
+		  'field' => 'changed',
+		  'override' => array(
+		    'button' => 'Override',
+		  ),
+		  'relationship' => 'none',
+		),
 	));
 	$handler->override_option('filters', array(
 		'status' => array(
