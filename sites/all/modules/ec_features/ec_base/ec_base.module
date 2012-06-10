@@ -76,7 +76,7 @@ function ec_base_footer($main = 0) {
   
   
   if (variable_get('ec_footer','1') == 1){
-     $output .= '<div id="ww_logo_footer" style="background-color:#000;text-align:right;margin-top:18px;">
+     $output .= '<div id="ww_logo_footer" style="height:24px;background-color:#000;text-align:right;margin-top:20px;">
       <div><a href="http://www.wisewebsites.co" ><img src="/ww_logo_footer.png"></img></a></div>
     </div>';
   }
