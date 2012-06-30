@@ -83,7 +83,8 @@ function _wisewebsites_modules() {
 	'ec_simplenews',
 	'ec_signup',
 	'ec_heartbeat',
-  'hosting_profile_roles',
+  //'hosting_profile_roles',
+  'ww_service_links',
   );
 }
 /**
